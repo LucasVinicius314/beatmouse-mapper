@@ -3,16 +3,17 @@ import * as fs from 'fs'
 
 import { detectMode, readLine } from './utils/index'
 
+import { config } from './config'
 import { parseBeatSaber } from './utils/fileOperations'
 
 type BeatmapCharacteristicName = 'OneSaber' | 'Standard'
 
 const main = async () => {
   console.log(
-    colors.green('Listing of all songs in input folder (songs/input/):')
+    colors.green(`Listing of all songs in input folder (${config.inputDir}/):`)
   )
 
-  const dir = fs.readdirSync('songs/input')
+  const dir = fs.readdirSync(config.inputDir)
 
   dir.forEach((d, k) => {
     console.log(`→ [${k}] ${d}`)
@@ -24,7 +25,7 @@ const main = async () => {
     const folder = dir[index]
 
     if (folder === undefined) {
-      throw new Error('Song not found')
+      throw new Error('Song not found.')
     }
 
     const res2 = await readLine('OneSaber? (y/n) ')
@@ -39,7 +40,7 @@ const main = async () => {
     console.log(colors.green(`Mode: ${mode}`))
 
     if (mode === 'adica') {
-      throw new Error('Adica not supported yet')
+      throw new Error('Adica not supported yet.')
     } else {
       await parseBeatSaber({
         beatmapCharacteristicName: beatmapCharacteristicName,
@@ -53,8 +54,8 @@ const main = async () => {
       `Mode: ${mode}`,
       `Characteristic name: ${beatmapCharacteristicName}`,
       `Remove impossible notes: ${removeImpossibleNotes}`,
-      `Output folder: songs/output/${folder}`,
-      `Output zip: songs/output/${folder}/${folder}.zip`,
+      `Output folder: ${config.outputDir}/${folder}`,
+      `Output zip: ${config.outputDir}/${folder}/${folder}.zip`,
     ]
 
     console.log(output.map((v) => `→ ${v}`).join('\n'))
@@ -62,7 +63,7 @@ const main = async () => {
 
     process.exit(0)
   } catch (error) {
-    console.log(colors.red('Error'), error)
+    console.log(colors.red('Error.'), error)
     process.exit(1)
   }
 }

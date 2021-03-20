@@ -3,6 +3,8 @@ import * as fs from 'fs'
 
 import { BeatmapDifficulty, Info } from '../typescript/beatsaber'
 
+import { config } from '../config'
+
 type Mode = 'adica' | 'beatsaber'
 
 type BeatmapCharacteristicName = 'OneSaber' | 'Standard'
@@ -15,7 +17,7 @@ type ParseOptions = {
 
 const detectMode = (folder: string) => {
   // detect if it's a beat saber map or an adica map
-  const exists = fs.existsSync(`songs/input/${folder}/song.desc`)
+  const exists = fs.existsSync(`${config.inputDir}/${folder}/song.desc`)
   const mode: Mode = exists ? 'adica' : 'beatsaber'
   return mode
 }
@@ -23,20 +25,20 @@ const detectMode = (folder: string) => {
 const mkdirSync = (folder: string) => {
   // create folder
   try {
-    fs.mkdirSync(`songs/output/${folder}`)
+    fs.mkdirSync(`${config.outputDir}/${folder}`)
   } catch {}
 }
 
 const moveContent = (folder: string) => {
   // fetch folder
-  const dir = fs.readdirSync(`songs/input/${folder}`)
+  const dir = fs.readdirSync(`${config.inputDir}/${folder}`)
 
   // for each file
   dir.forEach((file) => {
     // copy to output
     fs.copyFileSync(
-      `songs/input/${folder}/${file}`,
-      `songs/output/${folder}/${file}`
+      `${config.inputDir}/${folder}/${file}`,
+      `${config.outputDir}/${folder}/${file}`
     )
   })
 }
@@ -45,16 +47,16 @@ const makeZip = (folder: string) => {
   const zip = new AdmZip()
   // fetch folder
   const dir = fs
-    .readdirSync(`songs/output/${folder}`)
+    .readdirSync(`${config.outputDir}/${folder}`)
     .filter((file) => !file.match(/\.zip$/))
 
   // append each file to zip
   dir.forEach((file) => {
-    zip.addLocalFile(`songs/output/${folder}/${file}`)
+    zip.addLocalFile(`${config.outputDir}/${folder}/${file}`)
   })
 
   // write zip
-  zip.writeZip(`songs/output/${folder}/${folder}.zip`)
+  zip.writeZip(`${config.outputDir}/${folder}/${folder}.zip`)
 }
 
 const parseBeatSaber = async (options: ParseOptions) => {
@@ -71,7 +73,9 @@ const parseBeatSaber = async (options: ParseOptions) => {
 
   // fetch info.dat
   const info: Info = JSON.parse(
-    fs.readFileSync(`songs/input/${folder}/info.dat`, { encoding: 'utf-8' })
+    fs.readFileSync(`${config.inputDir}/${folder}/info.dat`, {
+      encoding: 'utf-8',
+    })
   )
 
   /// build new info
@@ -86,9 +90,12 @@ const parseBeatSaber = async (options: ParseOptions) => {
 
             // fetch difficulty
             const difficulty: BeatmapDifficulty = JSON.parse(
-              fs.readFileSync(`songs/input/${folder}/${v._beatmapFilename}`, {
-                encoding: 'utf-8',
-              })
+              fs.readFileSync(
+                `${config.inputDir}/${folder}/${v._beatmapFilename}`,
+                {
+                  encoding: 'utf-8',
+                }
+              )
             )
 
             const timestamps: number[] = []
@@ -122,7 +129,7 @@ const parseBeatSaber = async (options: ParseOptions) => {
 
             // write difficulty file
             fs.writeFileSync(
-              `songs/output/${folder}/${v._beatmapFilename}`,
+              `${config.outputDir}/${folder}/${v._beatmapFilename}`,
               newDifficultyJSON
             )
 
@@ -139,7 +146,7 @@ const parseBeatSaber = async (options: ParseOptions) => {
   const newInfoJSON = JSON.stringify(newInfo)
 
   // write info.dat file
-  fs.writeFileSync(`songs/output/${folder}/info.dat`, newInfoJSON)
+  fs.writeFileSync(`${config.outputDir}/${folder}/info.dat`, newInfoJSON)
 
   makeZip(folder)
 }
