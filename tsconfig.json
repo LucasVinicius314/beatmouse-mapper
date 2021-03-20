@@ -1,0 +1,13 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "lib": ["ES2020"],
+    "outDir": "build",
+    "target": "ES2020",
+    "resolveJsonModule": true,
+    "moduleResolution": "Node",
+    "module": "CommonJS"
+  },
+  "include": ["src"],
+  "exclude": ["build", "node_modules"]
+}

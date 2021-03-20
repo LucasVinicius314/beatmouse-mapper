@@ -74,3 +74,8 @@ typings/
 
 # FuseBox cache
 .fusebox/
+
+songs/input/
+songs/output/
+
+build/
