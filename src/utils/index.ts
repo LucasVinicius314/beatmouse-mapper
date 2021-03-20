@@ -1,5 +1,4 @@
-import { detectMode, parseAdica } from './fileOperations'
-
+import { detectMode } from './fileOperations'
 import { readLine } from './readline'
 
-export { readLine, detectMode, parseAdica }
+export { readLine, detectMode }

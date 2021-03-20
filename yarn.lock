@@ -2,10 +2,22 @@
 # yarn lockfile v1
 
 
-"@types/node@^14.14.35":
+"@types/adm-zip@^0.4.33":
+  version "0.4.33"
+  resolved "https://registry.yarnpkg.com/@types/adm-zip/-/adm-zip-0.4.33.tgz#ea5b94f771443f655613b64f920c0555867200dd"
+  integrity sha512-WM0DCWFLjXtddl0fu0+iN2ZF+qz8RF9RddG5OSy/S90AQz01Fu8lHn/3oTIZDxvG8gVcnBLAHMHOdBLbV6m6Mw==
+  dependencies:
+    "@types/node" "*"
+
+"@types/node@*", "@types/node@^14.14.35":
   version "14.14.35"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.35.tgz#42c953a4e2b18ab931f72477e7012172f4ffa313"
   integrity sha512-Lt+wj8NVPx0zUmUwumiVXapmaLUcAk3yPuHCFVXras9k5VT9TdhJqKqGVUQCD60OTMCl0qxJ57OiTL0Mic3Iag==
+
+adm-zip@^0.5.4:
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/adm-zip/-/adm-zip-0.5.4.tgz#af1f08c92cf9aa21b525231bce340fbdc39bd265"
+  integrity sha512-GMQg1a1cAegh+/EgWbz+XHZrwB467iB/IgtToldvxs7Xa5Br8mPmvCeRfY/Un2fLzrlIPt6Yu7Cej+8Ut9TGPg==
 
 colors@^1.4.0:
   version "1.4.0"

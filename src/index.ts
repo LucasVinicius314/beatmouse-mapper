@@ -1,13 +1,11 @@
 import * as colors from 'colors'
 import * as fs from 'fs'
 
-import { detectMode, parseAdica, readLine } from './utils/index'
+import { detectMode, readLine } from './utils/index'
 
 import { parseBeatSaber } from './utils/fileOperations'
 
-type Mode = 'adica' | 'beatsaber'
-
-const mode: Mode = 'adica'
+type BeatmapCharacteristicName = 'OneSaber' | 'Standard'
 
 const main = async () => {
   console.log(
@@ -29,15 +27,33 @@ const main = async () => {
       throw new Error('Song not found')
     }
 
+    const res2 = await readLine('OneSaber? (y/n) ')
+    const beatmapCharacteristicName: BeatmapCharacteristicName =
+      res2.toLowerCase() === 'y' ? 'OneSaber' : 'Standard'
+
     const mode = detectMode(folder)
 
-    console.log(colors.green(`Selected song: ${folder}, mode: ${mode}`))
+    console.log(colors.green(`Mode: ${mode}`))
 
     if (mode === 'adica') {
-      await parseAdica(folder)
+      throw new Error('Adica not supported yet')
     } else {
-      await parseBeatSaber(folder)
+      await parseBeatSaber(folder, beatmapCharacteristicName)
     }
+
+    const output = [
+      `Name: ${folder}`,
+      `Mode: ${mode}`,
+      `Characteristic name: ${beatmapCharacteristicName}`,
+      `Output folder: songs/output/${folder}`,
+      `Output zip: songs/output/${folder}/${folder}.zip`,
+    ]
+
+    console.log(colors.green('Conversion complete'))
+    console.log(output.map((v) => `→ ${v}`).join('\n'))
+    console.log(colors.green('Conversion complete.'))
+
+    process.exit(0)
   } catch (error) {
     console.log(colors.red('Error'), error)
     process.exit(1)
