@@ -31,6 +31,9 @@ const main = async () => {
     const beatmapCharacteristicName: BeatmapCharacteristicName =
       res2.toLowerCase() === 'y' ? 'OneSaber' : 'Standard'
 
+    const res3 = await readLine('Remove impossible notes? (y/n) ')
+    const removeImpossibleNotes: boolean = res3.toLowerCase() === 'y'
+
     const mode = detectMode(folder)
 
     console.log(colors.green(`Mode: ${mode}`))
@@ -38,18 +41,22 @@ const main = async () => {
     if (mode === 'adica') {
       throw new Error('Adica not supported yet')
     } else {
-      await parseBeatSaber(folder, beatmapCharacteristicName)
+      await parseBeatSaber({
+        beatmapCharacteristicName: beatmapCharacteristicName,
+        folder: folder,
+        removeImpossibleNotes: removeImpossibleNotes,
+      })
     }
 
     const output = [
       `Name: ${folder}`,
       `Mode: ${mode}`,
       `Characteristic name: ${beatmapCharacteristicName}`,
+      `Remove impossible notes: ${removeImpossibleNotes}`,
       `Output folder: songs/output/${folder}`,
       `Output zip: songs/output/${folder}/${folder}.zip`,
     ]
 
-    console.log(colors.green('Conversion complete'))
     console.log(output.map((v) => `→ ${v}`).join('\n'))
     console.log(colors.green('Conversion complete.'))
 

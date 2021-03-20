@@ -7,6 +7,12 @@ type Mode = 'adica' | 'beatsaber'
 
 type BeatmapCharacteristicName = 'OneSaber' | 'Standard'
 
+type ParseOptions = {
+  beatmapCharacteristicName?: BeatmapCharacteristicName
+  folder: string
+  removeImpossibleNotes: boolean
+}
+
 const detectMode = (folder: string) => {
   // detect if it's a beat saber map or an adica map
   const exists = fs.existsSync(`songs/input/${folder}/song.desc`)
@@ -51,10 +57,12 @@ const makeZip = (folder: string) => {
   zip.writeZip(`songs/output/${folder}/${folder}.zip`)
 }
 
-const parseBeatSaber = async (
-  folder: string,
-  beatmapCharacteristicName: BeatmapCharacteristicName
-) => {
+const parseBeatSaber = async (options: ParseOptions) => {
+  const beatmapCharacteristicName =
+    options.beatmapCharacteristicName || 'Standard'
+  const folder = options.folder
+  const removeImpossibleNotes = options.removeImpossibleNotes || false
+
   // create output song folder
   mkdirSync(folder)
 
@@ -83,15 +91,30 @@ const parseBeatSaber = async (
               })
             )
 
+            const timestamps: number[] = []
+
             // build new difficulty
             const newDifficulty: BeatmapDifficulty = {
               ...difficulty,
-              _notes: difficulty._notes.map((note) => {
-                return {
-                  ...note,
-                  _type: 1,
-                }
-              }),
+              // parse notes
+              _notes: difficulty._notes
+                .filter((f) => {
+                  const time = f._time
+                  if (removeImpossibleNotes) {
+                    if (!timestamps.find((f2) => time === f2)) {
+                      timestamps.push(time)
+                      return f._time
+                    }
+                  } else {
+                    return f._time
+                  }
+                })
+                .map((note) => {
+                  return {
+                    ...note,
+                    _type: 1,
+                  }
+                }),
             }
 
             // build output string
