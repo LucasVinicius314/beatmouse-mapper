@@ -1,7 +1,7 @@
-import * as AdmZip from 'adm-zip'
-import * as fs from 'fs'
+import * as AdmZip from 'adm-zip';
+import * as fs from 'fs';
 
-import { BeatmapDifficulty, Info } from '../typescript/beatsaber'
+import { BeatmapDifficulty, Info } from '../typescript/beatsaber';
 
 type Mode = 'adica' | 'beatsaber'
 
