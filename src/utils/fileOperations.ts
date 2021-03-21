@@ -1,7 +1,7 @@
 import * as AdmZip from 'adm-zip'
 import * as fs from 'fs'
 
-import { BeatmapDifficulty, Info } from '../typescript/beatsaber'
+import { BeatmapDifficulty, Info, Note } from '../typescript/beatsaber'
 
 import { config } from '../config'
 
@@ -98,7 +98,7 @@ const parseBeatSaber = async (options: ParseOptions) => {
               )
             )
 
-            const timestamps: number[] = []
+            const scannedNotes: Note[] = []
 
             // build new difficulty
             const newDifficulty: BeatmapDifficulty = {
@@ -107,9 +107,18 @@ const parseBeatSaber = async (options: ParseOptions) => {
               _notes: difficulty._notes
                 .filter((f) => {
                   const time = f._time
+                  const direction = f._cutDirection
                   if (removeImpossibleNotes) {
-                    if (!timestamps.find((f2) => time === f2)) {
-                      timestamps.push(time)
+                    if (
+                      !scannedNotes.find(
+                        (f2) =>
+                          time === f2._time ||
+                          (time - f2._time <= config.closeNotesThreshold &&
+                            direction === f2._cutDirection &&
+                            direction !== 8)
+                      )
+                    ) {
+                      scannedNotes.push(f)
                       return f._time
                     }
                   } else {
