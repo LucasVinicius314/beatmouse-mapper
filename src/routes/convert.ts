@@ -1,12 +1,15 @@
 import * as AdmZip from 'adm-zip'
-import * as fs from 'fs'
+import * as path from 'path'
 
 import { Router } from 'express'
 import { config } from '../config'
+import { parseBeatSaber } from '../utils/fileOperations'
+
+type BeatmapCharacteristicName = 'OneSaber' | 'Standard'
 
 const router = Router()
 
-router.post('/convert', (req, res) => {
+router.post('/convert', async (req, res) => {
 	try {
 		const file = req.files.file
 		if (!file) {
@@ -18,14 +21,25 @@ router.post('/convert', (req, res) => {
 			throw new Error('Not a zip file.')
 		}
 
+		const beatmapCharacteristicName: BeatmapCharacteristicName = 'OneSaber'
+		const folder = _file.name.replace(/\.zip$/, '')
+		const removeImpossibleNotes = true
+
 		const zip = new AdmZip(_file.tempFilePath)
 
-		zip.extractAllTo(`${config.outputDir}/${_file.name}`, true)
+		zip.extractAllTo(`${config.inputDir}/${folder}`, true)
 
-		res.json({
-			message: 'Uploaded',
+		await parseBeatSaber({
+			beatmapCharacteristicName: beatmapCharacteristicName,
+			folder: folder,
+			removeImpossibleNotes: removeImpossibleNotes,
+		})
+
+		res.sendFile(`${folder}/${_file.name}`, {
+			root: path.join(__dirname, `../../${config.outputDir}`),
 		})
 	} catch (error) {
+		console.log(error)
 		res.status(400).json({
 			message: error,
 		})
