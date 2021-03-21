@@ -79,3 +79,5 @@ songs/input/
 songs/output/
 
 build/
+
+tmp/

@@ -15,7 +15,7 @@ const readLine: ReadLine = async (
 		},
 	)
 	return await new Promise(
-		resolve => {
+		(resolve) => {
 			rl.question(
 				colors.yellow(question),
 				(text: string) => {

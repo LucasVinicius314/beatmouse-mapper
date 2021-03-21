@@ -8,6 +8,7 @@ import {
 
 import { config } from "./config"
 import { parseBeatSaber } from "./utils/fileOperations"
+import { setup } from "./server"
 
 type BeatmapCharacteristicName =
 	| "OneSaber"
@@ -84,7 +85,7 @@ const main = async () => {
 
 		console.log(
 			output
-				.map(v => `→ ${v}`)
+				.map((v) => `→ ${v}`)
 				.join("\n"),
 		)
 		console.log(
@@ -104,3 +105,5 @@ const main = async () => {
 }
 
 main()
+
+setup()

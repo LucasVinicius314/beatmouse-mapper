@@ -1,19 +1,13 @@
-import * as AdmZip from "adm-zip"
-import * as fs from "fs"
+import * as AdmZip from 'adm-zip'
+import * as fs from 'fs'
 
-import {
-	BeatmapDifficulty,
-	Info,
-	Note,
-} from "../typescript/beatsaber"
+import { BeatmapDifficulty, Info, Note } from '../typescript/beatsaber'
 
-import { config } from "../config"
+import { config } from '../config'
 
-type Mode = "adica" | "beatsaber"
+type Mode = 'adica' | 'beatsaber'
 
-type BeatmapCharacteristicName =
-	| "OneSaber"
-	| "Standard"
+type BeatmapCharacteristicName = 'OneSaber' | 'Standard'
 
 type ParseOptions = {
 	beatmapCharacteristicName?: BeatmapCharacteristicName
@@ -21,38 +15,26 @@ type ParseOptions = {
 	removeImpossibleNotes: boolean
 }
 
-const detectMode = (
-	folder: string,
-) => {
+const detectMode = (folder: string) => {
 	// detect if it's a beat saber map or an adica map
-	const exists = fs.existsSync(
-		`${config.inputDir}/${folder}/song.desc`,
-	)
-	const mode: Mode = exists
-		? "adica"
-		: "beatsaber"
+	const exists = fs.existsSync(`${config.inputDir}/${folder}/song.desc`)
+	const mode: Mode = exists ? 'adica' : 'beatsaber'
 	return mode
 }
 
 const mkdirSync = (folder: string) => {
 	// create folder
 	try {
-		fs.mkdirSync(
-			`${config.outputDir}/${folder}`,
-		)
+		fs.mkdirSync(`${config.outputDir}/${folder}`)
 	} catch {}
 }
 
-const moveContent = (
-	folder: string,
-) => {
+const moveContent = (folder: string) => {
 	// fetch folder
-	const dir = fs.readdirSync(
-		`${config.inputDir}/${folder}`,
-	)
+	const dir = fs.readdirSync(`${config.inputDir}/${folder}`)
 
 	// for each file
-	dir.forEach(file => {
+	dir.forEach((file) => {
 		// copy to output
 		fs.copyFileSync(
 			`${config.inputDir}/${folder}/${file}`,
@@ -65,36 +47,23 @@ const makeZip = (folder: string) => {
 	const zip = new AdmZip()
 	// fetch folder
 	const dir = fs
-		.readdirSync(
-			`${config.outputDir}/${folder}`,
-		)
-		.filter(
-			file => !file.match(/\.zip$/),
-		)
+		.readdirSync(`${config.outputDir}/${folder}`)
+		.filter((file) => !file.match(/\.zip$/))
 
 	// append each file to zip
-	dir.forEach(file => {
-		zip.addLocalFile(
-			`${config.outputDir}/${folder}/${file}`,
-		)
+	dir.forEach((file) => {
+		zip.addLocalFile(`${config.outputDir}/${folder}/${file}`)
 	})
 
 	// write zip
-	zip.writeZip(
-		`${config.outputDir}/${folder}/${folder}.zip`,
-	)
+	zip.writeZip(`${config.outputDir}/${folder}/${folder}.zip`)
 }
 
-const parseBeatSaber = async (
-	options: ParseOptions,
-) => {
+const parseBeatSaber = async (options: ParseOptions) => {
 	const beatmapCharacteristicName =
-		options.beatmapCharacteristicName ||
-		"Standard"
+		options.beatmapCharacteristicName || 'Standard'
 	const folder = options.folder
-	const removeImpossibleNotes =
-		options.removeImpossibleNotes ||
-		false
+	const removeImpossibleNotes = options.removeImpossibleNotes || false
 
 	// create output song folder
 	mkdirSync(folder)
@@ -104,12 +73,9 @@ const parseBeatSaber = async (
 
 	// fetch info.dat
 	const info: Info = JSON.parse(
-		fs.readFileSync(
-			`${config.inputDir}/${folder}/info.dat`,
-			{
-				encoding: "utf-8",
-			},
-		),
+		fs.readFileSync(`${config.inputDir}/${folder}/info.dat`, {
+			encoding: 'utf-8',
+		}),
 	)
 
 	/// build new info
@@ -119,7 +85,7 @@ const parseBeatSaber = async (
 			{
 				_beatmapCharacteristicName: beatmapCharacteristicName,
 				_difficultyBeatmaps: info._difficultyBeatmapSets[0]._difficultyBeatmaps.map(
-					v => {
+					(v) => {
 						// for each difficulty...
 
 						// fetch difficulty
@@ -127,8 +93,7 @@ const parseBeatSaber = async (
 							fs.readFileSync(
 								`${config.inputDir}/${folder}/${v._beatmapFilename}`,
 								{
-									encoding:
-										"utf-8",
+									encoding: 'utf-8',
 								},
 							),
 						)
@@ -140,39 +105,28 @@ const parseBeatSaber = async (
 							...difficulty,
 							// parse notes
 							_notes: difficulty._notes
-								.filter(f => {
-									const time =
-										f._time
-									const direction =
-										f._cutDirection
-									if (
-										removeImpossibleNotes
-									) {
+								.filter((f) => {
+									const time = f._time
+									const direction = f._cutDirection
+									if (removeImpossibleNotes) {
 										if (
 											!scannedNotes.find(
-												f2 =>
-													time -
-														f2._time <=
-														config.closeNotesThreshold ||
-													(time -
-														f2._time <=
+												(f2) =>
+													time - f2._time <= config.closeNotesThreshold ||
+													(time - f2._time <=
 														config.closeSimilarNotesThreshold &&
-														direction ===
-															f2._cutDirection &&
-														direction !==
-															8),
+														direction === f2._cutDirection &&
+														direction !== 8),
 											)
 										) {
-											scannedNotes.push(
-												f,
-											)
+											scannedNotes.push(f)
 											return f._time
 										}
 									} else {
 										return f._time
 									}
 								})
-								.map(note => {
+								.map((note) => {
 									return {
 										...note,
 										_type: 1,
@@ -181,9 +135,7 @@ const parseBeatSaber = async (
 						}
 
 						// build output string
-						const newDifficultyJSON = JSON.stringify(
-							newDifficulty,
-						)
+						const newDifficultyJSON = JSON.stringify(newDifficulty)
 
 						// write difficulty file
 						fs.writeFileSync(
@@ -201,15 +153,10 @@ const parseBeatSaber = async (
 	}
 
 	// build output string
-	const newInfoJSON = JSON.stringify(
-		newInfo,
-	)
+	const newInfoJSON = JSON.stringify(newInfo)
 
 	// write info.dat file
-	fs.writeFileSync(
-		`${config.outputDir}/${folder}/info.dat`,
-		newInfoJSON,
-	)
+	fs.writeFileSync(`${config.outputDir}/${folder}/info.dat`, newInfoJSON)
 
 	makeZip(folder)
 }
