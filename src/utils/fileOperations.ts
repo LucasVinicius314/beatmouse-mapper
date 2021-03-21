@@ -112,8 +112,9 @@ const parseBeatSaber = async (options: ParseOptions) => {
                     if (
                       !scannedNotes.find(
                         (f2) =>
-                          time === f2._time ||
-                          (time - f2._time <= config.closeNotesThreshold &&
+                          time - f2._time <= config.closeNotesThreshold ||
+                          (time - f2._time <=
+                            config.closeSimilarNotesThreshold &&
                             direction === f2._cutDirection &&
                             direction !== 8)
                       )
