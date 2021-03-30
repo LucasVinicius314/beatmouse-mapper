@@ -16,7 +16,7 @@ const setup = () => {
 	app.use(json())
 	app.use(
 		fileUpload({
-			debug: true,
+			// debug: true,
 			useTempFiles: true,
 			tempFileDir: config.tempDir,
 			limits: {

@@ -29,8 +29,15 @@ router.post('/convert', async (req, res) => {
 		const zip = new AdmZip(_file.tempFilePath)
 
 		try {
+			fs.mkdirSync(`${config.inputDir}`, { recursive: true })
+			fs.mkdirSync(`${config.outputDir}`, { recursive: true })
 			fs.mkdirSync(`${config.inputDir}/${folder}`, { recursive: true })
+			fs.mkdirSync(`${config.outputDir}/${folder}`, { recursive: true })
 		} catch {}
+
+		console.log('listing')
+		console.log(fs.readdirSync(config.inputDir))
+		console.log(fs.readdirSync(config.outputDir))
 
 		zip.extractAllTo(`${config.inputDir}/${folder}`, true)
 
