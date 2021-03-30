@@ -29,6 +29,7 @@ router.post('/convert', async (req, res) => {
 		const zip = new AdmZip(_file.tempFilePath)
 
 		try {
+			fs.mkdirSync(`songs`, { recursive: true })
 			fs.mkdirSync(`${config.inputDir}`, { recursive: true })
 			fs.mkdirSync(`${config.outputDir}`, { recursive: true })
 			fs.mkdirSync(`${config.inputDir}/${folder}`, { recursive: true })
