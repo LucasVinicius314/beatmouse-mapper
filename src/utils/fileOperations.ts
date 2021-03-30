@@ -78,14 +78,22 @@ const parseBeatSaber = async (options: ParseOptions) => {
 		}),
 	)
 
+	const foundDifficultySetNames: string[] = []
+
 	/// build new info
 	const newInfo: Info = {
 		...info,
 		_difficultyBeatmapSets: [
+			...info._difficultyBeatmapSets,
 			{
 				_beatmapCharacteristicName: beatmapCharacteristicName,
-				_difficultyBeatmaps: info._difficultyBeatmapSets[0]._difficultyBeatmaps.map(
-					(v) => {
+				_difficultyBeatmaps: info._difficultyBeatmapSets
+					.find(
+						(v, k) =>
+							v._beatmapCharacteristicName === 'Standard' ||
+							k === info._difficultyBeatmapSets.length - 1,
+					)
+					._difficultyBeatmaps.map((v) => {
 						// for each difficulty...
 
 						// fetch difficulty
@@ -146,10 +154,15 @@ const parseBeatSaber = async (options: ParseOptions) => {
 						return {
 							...v,
 						}
-					},
-				),
+					}),
 			},
-		],
+		].filter((v) => {
+			const name = v._beatmapCharacteristicName
+			const found =
+				foundDifficultySetNames.find((f) => f === name) !== undefined
+			foundDifficultySetNames.push(name)
+			return !found
+		}),
 	}
 
 	// build output string
