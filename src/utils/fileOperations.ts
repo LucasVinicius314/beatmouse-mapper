@@ -74,9 +74,13 @@ const parseBeatSaber = async (options: ParseOptions) => {
 	// move to output
 	moveContent(folder)
 
+	const datName: string = fs.existsSync(`${config.inputDir}/${folder}/Info.dat`)
+		? 'Info.dat'
+		: 'info.dat'
+
 	// fetch info.dat
 	const info: Info = JSON.parse(
-		fs.readFileSync(`${config.inputDir}/${folder}/info.dat`, {
+		fs.readFileSync(`${config.inputDir}/${folder}/${datName}`, {
 			encoding: 'utf-8',
 		}),
 	)
