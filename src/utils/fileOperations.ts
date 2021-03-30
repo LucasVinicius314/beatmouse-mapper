@@ -33,6 +33,9 @@ const moveContent = (folder: string) => {
 	// fetch folder
 	const dir = fs.readdirSync(`${config.inputDir}/${folder}`)
 
+	console.log('==================== files')
+	console.log(dir)
+
 	// for each file
 	dir.forEach((file) => {
 		// copy to output
