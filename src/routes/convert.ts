@@ -1,4 +1,5 @@
 import * as AdmZip from 'adm-zip'
+import * as fs from 'fs'
 import * as path from 'path'
 
 import { Router } from 'express'
@@ -26,6 +27,10 @@ router.post('/convert', async (req, res) => {
 		const removeImpossibleNotes = true
 
 		const zip = new AdmZip(_file.tempFilePath)
+
+		try {
+			fs.mkdirSync(`${config.inputDir}/${folder}`, { recursive: true })
+		} catch {}
 
 		zip.extractAllTo(`${config.inputDir}/${folder}`, true)
 
