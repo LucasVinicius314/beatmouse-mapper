@@ -48,9 +48,19 @@ router.post('/convert', async (req, res) => {
 			removeImpossibleNotes: removeImpossibleNotes,
 		})
 
-		res.sendFile(`${folder}/${_file.name}`, {
-			root: path.join(__dirname, `../../${config.outputDir}`),
-		})
+		// res.sendFile(`${folder}/${_file.name}`, {
+		// 	root: path.join(__dirname, `../../${config.outputDir}`),
+		// })
+
+		const out = {}
+
+		fs.readdirSync(`${config.outputDir}/${folder}`)
+			.filter((f) => f.match(/\.zip$/) === null)
+			.forEach((v) => {
+				out[v] = fs.readFileSync(`${config.outputDir}/${folder}/${v}`)
+			})
+
+		res.send(out)
 	} catch (error) {
 		console.log(error)
 		res.status(400).json({
