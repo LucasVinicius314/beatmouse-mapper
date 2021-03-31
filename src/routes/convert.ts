@@ -62,7 +62,10 @@ router.post('/convert', async (req, res) => {
 		fs.readdirSync(`${config.outputDir}/${folder}`)
 			.filter((f) => f.match(/\.zip$/) === null)
 			.forEach((v) => {
-				out[v] = fs.readFileSync(`${config.outputDir}/${folder}/${v}`)
+				console.log('reading ' + v)
+				out[v] = fs.readFileSync(`${config.outputDir}/${folder}/${v}`, {
+					encoding: 'utf-8',
+				})
 			})
 
 		res.send(out)
