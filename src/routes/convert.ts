@@ -11,6 +11,8 @@ type BeatmapCharacteristicName = 'OneSaber' | 'Standard'
 const router = Router()
 
 router.post('/convert', async (req, res) => {
+	console.log(req.files)
+
 	try {
 		const file = req.files.file
 		if (!file) {
@@ -18,7 +20,10 @@ router.post('/convert', async (req, res) => {
 		}
 
 		const _file = Array.isArray(file) ? file[0] : file
-		if (_file.mimetype !== 'application/zip') {
+		if (
+			_file.mimetype !== 'application/zip' &&
+			_file.mimetype !== 'application/x-zip-compressed'
+		) {
 			throw new Error('Not a zip file.')
 		}
 

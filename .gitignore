@@ -81,3 +81,5 @@ songs/output/
 build/
 
 tmp/
+
+*.html
