@@ -1,3 +1,4 @@
+import * as Blob from 'cross-blob'
 import * as cors from 'cors'
 import * as dotenv from 'dotenv'
 import * as express from 'express'
@@ -6,6 +7,8 @@ import * as fileUpload from 'express-fileupload'
 import { config } from './config'
 import { json } from 'body-parser'
 import { router } from './routes'
+
+global.Blob = Blob
 
 dotenv.config()
 

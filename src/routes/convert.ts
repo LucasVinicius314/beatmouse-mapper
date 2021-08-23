@@ -1,8 +1,11 @@
 import * as AdmZip from 'adm-zip'
+import * as Blob from 'cross-blob'
 import * as fs from 'fs'
-import * as path from 'path'
+import * as mime from 'mime'
+import * as streamToBlob from 'stream-to-blob'
 
 import { Router } from 'express'
+import { Buffer as _Buffer } from 'buffer/'
 import { config } from '../config'
 import { parseBeatSaber } from '../utils/fileOperations'
 
@@ -61,11 +64,15 @@ router.post('/convert', async (req, res) => {
 
 		fs.readdirSync(`${config.outputDir}/${folder}`)
 			.filter((f) => f.match(/\.zip$/) === null)
-			.forEach((v) => {
+			.forEach(async (v) => {
 				console.log('reading ' + v)
-				out[v] = fs.readFileSync(`${config.outputDir}/${folder}/${v}`, {
-					encoding: 'utf-8',
-				})
+
+				const stream = fs.createReadStream(`${config.outputDir}/${folder}/${v}`) // any Node.js readable stream
+				const blob = await streamToBlob(stream)
+
+				out[v] = blob
+
+				console.log(blob)
 			})
 
 		res.send(out)
